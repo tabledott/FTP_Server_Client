@@ -1,12 +1,12 @@
-package client;
+package com.example.ftpclient;
 
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
 public class FTPClient {
-    private static final String SERVER = "127.0.0.1"; // Change to your FTP server address
-    private static final int PORT = 21;
+    private static final String SERVER = "127.0.0.1"; // Replace with the FTP server address
+    private static final int PORT = 21; // Replace with the FTP server port
 
     public static void main(String[] args) {
         try (Socket socket = new Socket(SERVER, PORT);
@@ -35,7 +35,7 @@ public class FTPClient {
                 // Handle LIST and RETR separately to display their output
                 if (command.startsWith("LIST")) {
                     String response;
-                    while (!(response = in.readLine()).equals("226 List complete")) {
+                    while (!(response = in.readLine()).equals("226 Directory listing completed")) {
                         System.out.println(response);
                     }
                     System.out.println("Server: " + response);
