@@ -25,84 +25,37 @@ public class FTPClient {
             System.out.println("Connected to FTP server at " + SERVER + ":" + PORT);
 
             // Read and display the server's welcome message
-            System.out.println("Server: " + in.readLine());
+            String welcomeMessage = in.readLine();
+            System.out.println("Server: " + welcomeMessage);
 
             // Authenticate with username and password
-            out.println("USER " + username);
-            System.out.println("Server: " + in.readLine());
-            out.println("PASS " + password);
-            String authResponse = in.readLine();
-            System.out.println("Server: " + authResponse);
-
-            if (!authResponse.startsWith("230")) {
+            AuthenticationManager authManager = new AuthenticationManager(out, in);
+            if (!authManager.authenticate(username, password)) {
                 System.out.println("Authentication failed. Exiting.");
                 return;
             }
 
-            // Enter FTP commands
-            String command;
+            // Handle FTP commands
+            FTPCommandExecutor commandExecutor = new FTPCommandExecutor(out, in);
             while (true) {
                 System.out.print("ftp> ");
-                command = scanner.nextLine();
+                String command = scanner.nextLine();
 
                 if (command.equalsIgnoreCase("QUIT")) {
-                    out.println(command);
-                    System.out.println("Server: " + in.readLine());
+                    commandExecutor.quit();
                     break;
                 }
 
                 if (command.startsWith("RETR")) {
-                    handleRetr(command, out, in);
+                    commandExecutor.handleRetr(command);
                 } else if (command.startsWith("LIST")) {
-                    handleList(out, in);
+                    commandExecutor.handleList();
                 } else {
-                    // Send generic command and print server response
-                    out.println(command);
-                    System.out.println("Server: " + in.readLine());
+                    commandExecutor.executeCommand(command);
                 }
             }
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage());
-        }
-    }
-
-    private static void handleList(PrintWriter out, BufferedReader in) throws IOException {
-        out.println("LIST");
-        String response;
-        while (!(response = in.readLine()).equals("226 Directory listing completed")) {
-            System.out.println(response);
-        }
-        System.out.println("Server: " + response);
-    }
-
-    private static void handleRetr(String command, PrintWriter out, BufferedReader in) throws IOException {
-        String[] parts = command.split(" ", 2);
-        if (parts.length < 2) {
-            System.out.println("Usage: RETR <filename>");
-            return;
-        }
-
-        String fileName = parts[1];
-        out.println("RETR " + fileName);
-
-        // Read server response
-        String serverResponse = in.readLine();
-        System.out.println("Server: " + serverResponse);
-
-        if (serverResponse.startsWith("150")) { // File transfer about to start
-            try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(fileName))) {
-                String line;
-                while (!(line = in.readLine()).equals("226 Transfer complete")) {
-                    fileWriter.write(line);
-                    fileWriter.newLine();
-                }
-                System.out.println("Server: " + line);
-                System.out.println("File '" + fileName + "' downloaded successfully.");
-            } catch (IOException e) {
-                System.err.println("Error saving file: " + e.getMessage());
-            }
-        } else {
-            System.out.println("Failed to retrieve file: " + serverResponse);
         }
     }
 }
