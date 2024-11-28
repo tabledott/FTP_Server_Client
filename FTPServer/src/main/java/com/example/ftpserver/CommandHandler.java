@@ -34,6 +34,10 @@ public class CommandHandler {
                 }
                 break;
 
+            case "DELE":
+                handleDelete(tokenizer);
+                break;
+
             case "QUIT":
                 handleQuit();
                 break;
@@ -82,6 +86,27 @@ public class CommandHandler {
             out.println("550 File not found");
         }
     }
+    
+    private void handleDelete(StringTokenizer tokenizer) {
+        if (!tokenizer.hasMoreTokens()) {
+            out.println("501 Missing file name");
+            return;
+        }
+
+        String fileName = tokenizer.nextToken();
+        File file = new File(fileName);
+
+        if (file.exists() && !file.isDirectory()) {
+            if (file.delete()) {
+                out.println("250 File deleted successfully");
+            } else {
+                out.println("550 Unable to delete file. Permission denied.");
+            }
+        } else {
+            out.println("550 File not found or is a directory.");
+        }
+    }
+
 
     private void handleQuit() {
         out.println("221 Goodbye");

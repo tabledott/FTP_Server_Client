@@ -49,6 +49,27 @@ public class FTPCommandExecutor {
             System.out.println("Failed to retrieve file: " + serverResponse);
         }
     }
+    
+    public void handleDelete(String command) throws IOException {
+        String[] parts = command.split(" ", 2);
+        if (parts.length < 2) {
+            System.out.println("Usage: DELE <filename>");
+            return;
+        }
+
+        String fileName = parts[1];
+        out.println("DELE " + fileName);
+
+        // Read server response
+        String response = in.readLine();
+        System.out.println("Server: " + response);
+
+        if (response.startsWith("250")) {
+            System.out.println("File '" + fileName + "' deleted successfully.");
+        } else {
+            System.out.println("Failed to delete file: " + response);
+        }
+    }
 
     public void quit() throws IOException {
         out.println("QUIT");

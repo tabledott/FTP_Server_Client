@@ -48,7 +48,10 @@ public class FTPClient {
 
                 if (command.startsWith("RETR")) {
                     commandExecutor.handleRetr(command);
-                } else if (command.startsWith("LIST")) {
+                } else if (command.startsWith("DELE")) {
+                    commandExecutor.handleDelete(command);
+                }
+                else if (command.startsWith("LIST")) {
                     commandExecutor.handleList();
                 } else {
                     commandExecutor.executeCommand(command);
