@@ -1,10 +1,10 @@
 package com.example.ftpserver;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 public class AuthenticationManager {
-    private static final Map<String, String> credentials = new HashMap<>();
+    private static final Map<String, String> credentials = new ConcurrentHashMap<>();
 
     static {
         credentials.put("user1", "password1");

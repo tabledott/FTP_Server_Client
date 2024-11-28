@@ -35,17 +35,16 @@ public class FTPClient {
                 return;
             }
 
+            System.out.println("Possible commands: QUIT, RETR, DELE, LIST");
             // Handle FTP commands
             FTPCommandExecutor commandExecutor = new FTPCommandExecutor(out, in);
             while (true) {
                 System.out.print("ftp> ");
                 String command = scanner.nextLine();
-
                 if (command.equalsIgnoreCase("QUIT")) {
                     commandExecutor.quit();
                     break;
                 }
-
                 if (command.startsWith("RETR")) {
                     commandExecutor.handleRetr(command);
                 } else if (command.startsWith("DELE")) {
