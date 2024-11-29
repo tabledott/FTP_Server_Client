@@ -35,7 +35,7 @@ public class UploadCommand implements Command {
         
         fileLock.lock();
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file))) {
-            out.println("150 Ready to receive file");
+            out.println("350 Ready to receive file");
 
             String line;
             while (!(line = in.readLine()).equals("EOF")) { // Expect "EOF" as the end-of-file marker

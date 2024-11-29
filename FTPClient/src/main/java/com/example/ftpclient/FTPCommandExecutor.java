@@ -9,7 +9,11 @@ import java.io.PrintWriter;
 public class FTPCommandExecutor {
     private final PrintWriter out;
     private final BufferedReader in;
-
+    
+    private final String UploadOKCode = "350"; 
+    private final String DeleteOKCode = "250";
+    private final String TransferOKCode = "150";
+    
     public FTPCommandExecutor(PrintWriter out, BufferedReader in) {
         this.out = out;
         this.in = in;
@@ -50,7 +54,7 @@ public class FTPCommandExecutor {
         String serverResponse = in.readLine();
         System.out.println("Server: " + serverResponse);
 
-        if (serverResponse.startsWith("150")) { // File transfer about to start
+        if (serverResponse.startsWith(TransferOKCode)) { // File transfer about to start
             FileManager fileManager = new FileManager(fileName, in);
             fileManager.downloadFile();
         } else {
@@ -83,7 +87,7 @@ public class FTPCommandExecutor {
 	        String response = in.readLine();
 	        System.out.println(response);
 	
-	        if (response.startsWith("150")) { // Server is ready to receive file
+	        if (response.startsWith(UploadOKCode)) { // Server is ready to receive file
 	            try (BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
 	                String line;
 	                while ((line = fileReader.readLine()) != null) {
@@ -113,7 +117,7 @@ public class FTPCommandExecutor {
         String response = in.readLine();
         System.out.println("Server: " + response);
 
-        if (response.startsWith("250")) {
+        if (response.startsWith(DeleteOKCode)) {
             System.out.println("File '" + fileName + "' deleted successfully.");
         } else {
             System.out.println("Failed to delete file: " + response);
