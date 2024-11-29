@@ -22,6 +22,7 @@ public class CommandHandler {
     public void initializeCommands(StringTokenizer tokenizer, boolean authenticated) {
         commands.put("LIST", new ListCommand(out, fileLock));
         commands.put("RETR", new RetrieveCommand(out, tokenizer, fileLock));
+        commands.put("UPL", new UploadCommand(in, out, tokenizer, fileLock));
         commands.put("DELE", new DeleteCommand(out, tokenizer, fileLock));
         commands.put("QUIT", new QuitCommand(out));
     }

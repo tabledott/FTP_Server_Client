@@ -35,7 +35,8 @@ public class FTPClient {
                 return;
             }
 
-            System.out.println("Possible commands: QUIT, RETR, DELE, LIST");
+            System.out.println("Possible commands: QUIT, RETR, UPL, DELE, LIST");
+            
             // Handle FTP commands
             FTPCommandExecutor commandExecutor = new FTPCommandExecutor(out, in);
             while (true) {
@@ -52,7 +53,10 @@ public class FTPClient {
                 }
                 else if (command.startsWith("LIST")) {
                     commandExecutor.handleList();
-                } else {
+                } else if (command.startsWith("UPL")) {
+                	commandExecutor.handleUpload(command);
+                }
+                else {
                     commandExecutor.executeCommand(command);
                 }
             }
