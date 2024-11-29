@@ -7,7 +7,7 @@ import java.util.concurrent.locks.Lock;
 public class ListCommand implements Command {
     private final PrintWriter out;
     private final Lock fileLock;
-
+    
     public ListCommand(PrintWriter out, Lock fileLock) {
         this.out = out;
         this.fileLock = fileLock;
@@ -27,6 +27,7 @@ public class ListCommand implements Command {
         try {
             if (files != null) {
                 out.println("150 Here comes the directory listing");
+                
                 for (String file : files) {
                     out.println(file);
                 }

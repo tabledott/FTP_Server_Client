@@ -2,16 +2,19 @@ package com.example.ftpserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.UUID;
 
 public class ClientSession implements Runnable {
     private final Socket clientSocket;
     private final AuthenticationManager authManager;
     private boolean authenticated = false;
     private String currentUsername;
+    private final String sessionId;
 
     public ClientSession(Socket clientSocket) {
         this.clientSocket = clientSocket;
         this.authManager = new AuthenticationManager();
+        this.sessionId = UUID.randomUUID().toString(); 
     }
 
     @Override
@@ -31,7 +34,7 @@ public class ClientSession implements Runnable {
                 if (!authenticated) {
                     handleAuthentication(line, out);
                 } else {
-                    commandHandler.handleCommand(line, authenticated);
+                    commandHandler.handleCommand(line, authenticated, sessionId);
                 }
             }
         } catch (IOException e) {
@@ -58,8 +61,10 @@ public class ClientSession implements Runnable {
                 currentUsername = null;
             }
         } else if (command.equals("PASS") && parts.length > 1) {
-            if (currentUsername != null && authManager.authenticate(currentUsername, parts[1])) {
+        	final String password = parts[1];
+            if (currentUsername != null && authManager.authenticate(currentUsername, password)) {
                 authenticated = true;
+                MonitoringService.getInstance().userLoggedIn(currentUsername);
                 out.println("230 User logged in");
             } else {
                 out.println("530 Authentication failed. Invalid password.");

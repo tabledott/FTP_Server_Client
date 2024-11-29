@@ -9,8 +9,7 @@ import java.util.concurrent.Executors;
 public class FTPServer {
     private static final int PORT = 21;
     private static final int THREAD_POOL_SIZE = 30;
-
-
+    
     public static void main(String[] args) {
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 

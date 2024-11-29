@@ -9,10 +9,13 @@ public class DeleteCommand implements Command {
     private final PrintWriter out;
     private final StringTokenizer tokenizer;
     private final Lock fileLock;
+    private final String sessionID;
 
-    public DeleteCommand(PrintWriter out, StringTokenizer tokenizer, Lock fileLock) {
+    public DeleteCommand(PrintWriter out, StringTokenizer tokenizer, 
+    					 String sessionId, Lock fileLock) {
         this.out = out;
         this.tokenizer = tokenizer;
+        this.sessionID = sessionId;
         this.fileLock = fileLock;
     }
 
@@ -35,6 +38,7 @@ public class DeleteCommand implements Command {
         try {
             if (file.exists() && !file.isDirectory()) {
                 if (file.delete()) {
+                    MonitoringService.getInstance().logActivity(sessionID, "del " + fileName);
                     out.println("250 File deleted successfully");
                 } else {
                     out.println("550 Unable to delete file. Permission denied.");

@@ -19,19 +19,19 @@ public class CommandHandler {
         this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
     
-    public void initializeCommands(StringTokenizer tokenizer, boolean authenticated) {
+    public void initializeCommands(StringTokenizer tokenizer, boolean authenticated, String sessionId) {
         commands.put("LIST", new ListCommand(out, fileLock));
-        commands.put("RETR", new RetrieveCommand(out, tokenizer, fileLock));
-        commands.put("UPL", new UploadCommand(in, out, tokenizer, fileLock));
-        commands.put("DELE", new DeleteCommand(out, tokenizer, fileLock));
-        commands.put("QUIT", new QuitCommand(out));
+        commands.put("RETR", new RetrieveCommand(out, tokenizer, sessionId, fileLock));
+        commands.put("UPL", new UploadCommand(in, out, tokenizer, sessionId, fileLock));
+        commands.put("DELE", new DeleteCommand(out, tokenizer, sessionId, fileLock));
+        commands.put("QUIT", new QuitCommand(out, sessionId));
     }
 
-    public void handleCommand(String command, boolean authenticated) throws IOException {
+    public void handleCommand(String command, boolean authenticated, String sessionId) throws IOException {
         StringTokenizer tokenizer = new StringTokenizer(command);
         String cmd = tokenizer.nextToken().toUpperCase();
 
-        initializeCommands(tokenizer, authenticated);
+        initializeCommands(tokenizer, authenticated, sessionId);
 
         Command commandHandler = commands.get(cmd);
         if (commandHandler != null) {

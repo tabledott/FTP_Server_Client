@@ -9,12 +9,14 @@ public class UploadCommand implements Command {
     private final BufferedReader in;
     private final StringTokenizer tokenizer;
     private final Lock fileLock;
+    private final String sessionId;
     
     public UploadCommand(BufferedReader in, PrintWriter out, 
-    					 StringTokenizer tokenizer, Lock fileLock) {
+    					 StringTokenizer tokenizer, String sessionId, Lock fileLock) {
         this.in = in;
     	this.out = out;
         this.tokenizer = tokenizer;
+        this.sessionId = sessionId;
         this.fileLock = fileLock;
     }
 	
@@ -44,6 +46,7 @@ public class UploadCommand implements Command {
             }
 
             out.println("226 File upload complete");
+            MonitoringService.getInstance().logActivity(sessionId, "retr " + fileName);
         } catch (IOException e) {
             out.println("451 Error writing file: " + e.getMessage());
         } finally {

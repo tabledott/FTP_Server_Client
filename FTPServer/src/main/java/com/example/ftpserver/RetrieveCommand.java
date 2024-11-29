@@ -8,11 +8,14 @@ public class RetrieveCommand implements Command {
     private final PrintWriter out;
     private final StringTokenizer tokenizer;
     private final Lock fileLock;
+    private final String sessionID;
 
-    public RetrieveCommand(PrintWriter out, StringTokenizer tokenizer, Lock fileLock) {
+    public RetrieveCommand(PrintWriter out, StringTokenizer tokenizer, 
+    					   String sessionId, Lock fileLock) {
         this.out = out;
         this.tokenizer = tokenizer;
         this.fileLock = fileLock;
+        this.sessionID = sessionId;
     }
 
     @Override
@@ -40,6 +43,7 @@ public class RetrieveCommand implements Command {
                         out.println(line);
                     }
                     out.println("226 Transfer complete");
+                    MonitoringService.getInstance().logActivity(sessionID, "retr " + fileName);
                 } catch (IOException e) {
                     out.println("451 Error reading file");
                 }
